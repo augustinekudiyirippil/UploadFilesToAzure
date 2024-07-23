@@ -45,6 +45,7 @@ namespace AppToCopyFiles
             this.btnExportIncommingAttachmenys = new System.Windows.Forms.Button();
             this.btnShowIncomingAttachments = new System.Windows.Forms.Button();
             this.tabOutgoingEmailAttachments = new System.Windows.Forms.TabPage();
+            this.cmdCreateContainer = new System.Windows.Forms.Button();
             this.btnUploadOutgoingToAzure = new System.Windows.Forms.Button();
             this.lblErrorOutgoingAttachments = new System.Windows.Forms.Label();
             this.btnCSVOutgoingAttachment = new System.Windows.Forms.Button();
@@ -57,7 +58,8 @@ namespace AppToCopyFiles
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtContainer = new System.Windows.Forms.TextBox();
-            this.cmdCreateContainer = new System.Windows.Forms.Button();
+            this.cmdContainers = new System.Windows.Forms.Button();
+            this.cmbContainers = new System.Windows.Forms.ComboBox();
             this.tabData.SuspendLayout();
             this.tabGeneralAttachments.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridGeneralAttachments)).BeginInit();
@@ -252,6 +254,16 @@ namespace AppToCopyFiles
             this.tabOutgoingEmailAttachments.Text = "Outgoing email attachments          ";
             this.tabOutgoingEmailAttachments.UseVisualStyleBackColor = true;
             // 
+            // cmdCreateContainer
+            // 
+            this.cmdCreateContainer.Location = new System.Drawing.Point(597, 15);
+            this.cmdCreateContainer.Name = "cmdCreateContainer";
+            this.cmdCreateContainer.Size = new System.Drawing.Size(230, 36);
+            this.cmdCreateContainer.TabIndex = 15;
+            this.cmdCreateContainer.Text = "Create Container";
+            this.cmdCreateContainer.UseVisualStyleBackColor = true;
+            this.cmdCreateContainer.Click += new System.EventHandler(this.cmdCreateContainer_Click);
+            // 
             // btnUploadOutgoingToAzure
             // 
             this.btnUploadOutgoingToAzure.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -366,26 +378,41 @@ namespace AppToCopyFiles
             // txtContainer
             // 
             this.txtContainer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtContainer.Location = new System.Drawing.Point(852, 26);
+            this.txtContainer.Location = new System.Drawing.Point(844, 56);
             this.txtContainer.Name = "txtContainer";
             this.txtContainer.Size = new System.Drawing.Size(253, 23);
             this.txtContainer.TabIndex = 6;
+            this.txtContainer.Text = "simplisysltd";
+            this.txtContainer.Visible = false;
             // 
-            // cmdCreateContainer
+            // cmdContainers
             // 
-            this.cmdCreateContainer.Location = new System.Drawing.Point(597, 15);
-            this.cmdCreateContainer.Name = "cmdCreateContainer";
-            this.cmdCreateContainer.Size = new System.Drawing.Size(230, 36);
-            this.cmdCreateContainer.TabIndex = 15;
-            this.cmdCreateContainer.Text = "Create Container";
-            this.cmdCreateContainer.UseVisualStyleBackColor = true;
-            this.cmdCreateContainer.Click += new System.EventHandler(this.cmdCreateContainer_Click);
+            this.cmdContainers.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmdContainers.Location = new System.Drawing.Point(1135, 24);
+            this.cmdContainers.Name = "cmdContainers";
+            this.cmdContainers.Size = new System.Drawing.Size(140, 37);
+            this.cmdContainers.TabIndex = 10;
+            this.cmdContainers.Text = "Containers";
+            this.cmdContainers.UseVisualStyleBackColor = true;
+            this.cmdContainers.Click += new System.EventHandler(this.cmdContainers_Click);
+            // 
+            // cmbContainers
+            // 
+            this.cmbContainers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbContainers.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbContainers.FormattingEnabled = true;
+            this.cmbContainers.Location = new System.Drawing.Point(844, 28);
+            this.cmbContainers.Name = "cmbContainers";
+            this.cmbContainers.Size = new System.Drawing.Size(253, 24);
+            this.cmbContainers.TabIndex = 11;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1303, 767);
+            this.Controls.Add(this.cmbContainers);
+            this.Controls.Add(this.cmdContainers);
             this.Controls.Add(this.txtContainer);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dtFromDate);
@@ -442,6 +469,8 @@ namespace AppToCopyFiles
         private System.Windows.Forms.Button btnUploadIncomingToAzure;
         private System.Windows.Forms.Button btnUploadOutgoingToAzure;
         private System.Windows.Forms.Button cmdCreateContainer;
+        private System.Windows.Forms.Button cmdContainers;
+        private System.Windows.Forms.ComboBox cmbContainers;
     }
 }
 

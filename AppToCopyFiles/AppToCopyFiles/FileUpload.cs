@@ -20,10 +20,11 @@ namespace AppToCopyFiles
 
         string[] _filePath;
         string _fileName;
+        string filePathSecondPart;
 
 
 
- 
+
 
 
         public string AddCompanyStorage(string subDomain, string connectionString)
@@ -46,17 +47,54 @@ namespace AppToCopyFiles
         }
 
 
-        public async Task<string> uploadFilesToAzureBlobAsync(string connectionString, string containerName,  string filePath)
+        public List<string> listContainers(string azStorageConnString)
         {
+
+            BlobServiceClient blobServiceClient = new BlobServiceClient(azStorageConnString);
+            var containerNameList = blobServiceClient.GetBlobContainers();
+            List<string> containerNames = new List<string>();
+            foreach (var container in containerNameList)
+            {
+                var cName = container.Name;
+                containerNames.Add(container.Name);
+            }
+
+            return containerNames;
+
+
+
+
+
+        }
+
+
+
+        public async Task<string> uploadFilesToAzureBlobAsync(string connectionString, string containerName,  string filePath , string sqlDatabase)
+        {
+
+  
+
+
+
             try             
             {
+
+                _filePath = StringExtension.xSplit(  filePath, sqlDatabase+"\\");
+                filePathSecondPart = _filePath[_filePath.Length - 1];
+
                 BlobServiceClient _blobServiceClient = new BlobServiceClient(connectionString);
-                var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-                _filePath = filePath.Split('\\');
-                _fileName = _filePath[_filePath.Length - 1];
-              //  AddCompanyStorage("TestContainer", connectionString);
-                BlobClient blobClient = blobContainerClient.GetBlobClient(_fileName);
-              await blobClient.UploadAsync(filePath);
+                var containerInstance = _blobServiceClient.GetBlobContainerClient(containerName);
+
+               
+
+                byte[] fileBytes = File.ReadAllBytes(filePath);
+                Stream stream = new MemoryStream(fileBytes);
+
+                var blobInstance = containerInstance.GetBlobClient(filePathSecondPart);
+                var val = await blobInstance.UploadAsync(stream, true);
+
+
+
                 return "Upload completed.";
             }
             catch(Exception ex)
@@ -67,33 +105,52 @@ namespace AppToCopyFiles
 
         }
 
+        public async Task<string> uploadFilesToAzureBlobAsyncBackup(string connectionString, string containerName, string filePath)
+        {
+            try
+            {
+                BlobServiceClient _blobServiceClient = new BlobServiceClient(connectionString);
+                var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+                _filePath = filePath.Split('\\');
+                _fileName = _filePath[_filePath.Length - 1];
+                //  AddCompanyStorage("TestContainer", connectionString);
+                BlobClient blobClient = blobContainerClient.GetBlobClient(_fileName);
+                await blobClient.UploadAsync(filePath);
+                return "Upload completed.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message.ToString();
 
-       
+            }
 
-
-
-
-
-
-//public async Task<string> Upload(IFormFile _formFile, string _FileName)
-//{
-//    try
-//    {
-//        BlobServiceClient _blobServiceClient = new BlobServiceClient(connectionString);
-//        var containerInstance = _blobServiceClient.GetBlobContainerClient(GetTenantCode());
-
-//        var blobInstance = containerInstance.GetBlobClient(_FileName);
-//        var val = await blobInstance.UploadAsync(_formFile.OpenReadStream(), true);
-//        return blobInstance.Uri.AbsoluteUri;
-//    }
-//    catch (Exception Ex)
-//    {
-//        throw;
-//    }
-//}
+        }
 
 
-public string uploadFilesToAzure(string connectionString, string containerName, string blobName, string filePath)
+
+
+
+
+
+        //public async Task<string> Upload(IFormFile _formFile, string _FileName)
+        //{
+        //    try
+        //    {
+        //        BlobServiceClient _blobServiceClient = new BlobServiceClient(connectionString);
+        //        var containerInstance = _blobServiceClient.GetBlobContainerClient(GetTenantCode());
+
+        //        var blobInstance = containerInstance.GetBlobClient(_FileName);
+        //        var val = await blobInstance.UploadAsync(_formFile.OpenReadStream(), true);
+        //        return blobInstance.Uri.AbsoluteUri;
+        //    }
+        //    catch (Exception Ex)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+
+        public string uploadFilesToAzure(string connectionString, string containerName, string blobName, string filePath)
         {
             try 
             { 

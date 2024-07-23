@@ -14,6 +14,8 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AppToCopyFiles
 {
@@ -29,7 +31,7 @@ namespace AppToCopyFiles
         private IConfiguration Configuration;
 
 
-        string connectionString;  
+        string connectionString; 
 
 
        
@@ -52,9 +54,13 @@ namespace AppToCopyFiles
         string blobName = "Contacts";
         string filePath = "<path_to_your_file>";
         string fileName = "";
+        string responseMessage;
 
         ReadConfigData readConfig = new ReadConfigData();
         FileUpload fileUpload = new FileUpload();
+
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -68,11 +74,27 @@ namespace AppToCopyFiles
 
             listAllDatabases();
 
-           
+            getContainers();
             
         }
 
-  
+
+        void getContainers()
+        {
+            List<string> containerNames = new List<string>();
+
+            containerNames = fileUpload.listContainers(blobConnectionString);
+
+            containerNames = fileUpload.listContainers(blobConnectionString);
+            cmbContainers.Items.Clear();
+            foreach (string containerName in containerNames)
+            {
+                cmbContainers.Items.Add(containerName);
+            }
+
+        }
+
+        
 
 
 
@@ -92,7 +114,13 @@ namespace AppToCopyFiles
                 // Get a reference to the blob
                 BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
-                 
+
+                // Open the file and upload its data
+                //  dataGridView.Rows[1].Cells[5].Value.ToString()
+
+                //filePath = "\\web03\\Attachments\\Simplisys\\a9963c0c-d08e-43fa-a861-3e4f977dcfee\\Sueryder-TestEmail.jpg";
+
+                filePath = gridGeneralAttachments.Rows[1].Cells[5].Value.ToString();  //.Remove(0, 2);
 
                 //blobClient.Upload(filePath, true);
                 
@@ -354,7 +382,7 @@ namespace AppToCopyFiles
 
         int checkContainerName()
         {
-            return txtContainer.Text.Trim().Length;
+            return cmbContainers.SelectedItem.ToString().Trim().Length;
 
         }
 
@@ -370,20 +398,22 @@ namespace AppToCopyFiles
 
                 try
                 {
-                    filePath = "F:\\AttachmentsToExport\\Simplisys\\1025\\adflex-limited.csv";  // This line is for testing
-                    fileName = "adflex-limited";
+                    
 
-                    lblError.Text = fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, containerName, filePath).ToString();
+
 
 
                     gridRowCount = gridGeneralAttachments.Rows.Count;
 
                     for (int rows = 0; rows < gridRowCount - 1; rows++)
                     {
+                        //find the path till the database name
 
-                        lblError.Text = fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, txtContainer.Text.Trim(), gridGeneralAttachments.Rows[rows].Cells[5].Value.ToString()).ToString();
+
+                        responseMessage = fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, cmbContainers.SelectedItem.ToString(), gridGeneralAttachments.Rows[rows].Cells[10].Value.ToString(), cmbDatabases.SelectedItem.ToString()).ToString();
 
                     }
+                    lblError.Text = "Files uploaded";
 
                 }
                 catch (Exception ex)
@@ -431,10 +461,11 @@ namespace AppToCopyFiles
                     {
 
 
-                        lblError.Text = fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, txtContainer.Text.Trim(), gridIncomingAttachments.Rows[rows].Cells[2].Value.ToString()).ToString();
+                        responseMessage = fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, cmbContainers.SelectedItem.ToString(), gridIncomingAttachments.Rows[rows].Cells[4].Value.ToString(), cmbDatabases.SelectedItem.ToString()).ToString();
 
 
                     }
+                    lblErrorIncomingAttachments.Text = "Files uploaded";
 
                 }
                 catch (Exception ex)
@@ -446,23 +477,34 @@ namespace AppToCopyFiles
             }
         }
 
+
+      
+
+        private Task ListContainersAsync(CloudBlobClient cloudBlobClient)
+        {
+            throw new NotImplementedException();
+        }
+
         private void btnUploadOutgoingToAzure_Click(object sender, EventArgs e)
         {
             if (checkContainerName() > 1)
             {
 
-                gridRowCount = gridGeneralAttachments.Rows.Count;
+                gridRowCount = gridOutgoingAttachments.Rows.Count;
 
 
                 try
                 {
                     for (int rows = 0; rows < gridRowCount - 1; rows++)
                     {
+                        if (gridOutgoingAttachments.Rows[rows].Cells[13].Value.ToString().Trim().Length > 1)
+                        {
 
-                        lblError.Text = fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, txtContainer.Text.Trim(), gridOutgoingAttachments.Rows[rows].Cells[1].Value.ToString()).ToString();
-
+                            responseMessage= fileUpload.uploadFilesToAzureBlobAsync(blobConnectionString, cmbContainers.SelectedItem.ToString() , gridOutgoingAttachments.Rows[rows].Cells[13].Value.ToString(), cmbDatabases.SelectedItem.ToString()).ToString();
+                        }
 
                     }
+                    lblErrorOutgoingAttachments.Text = "Files uploaded";
 
                 }
                 catch (Exception ex)
@@ -478,6 +520,14 @@ namespace AppToCopyFiles
         private void cmdCreateContainer_Click(object sender, EventArgs e)
         {
             lblError.Text= fileUpload.AddCompanyStorage(  "TestAzureBlobContainer", blobConnectionString);
+        }
+
+        private void cmdContainers_Click(object sender, EventArgs e)
+        {
+            getContainers();
+
+            
+
         }
 
         private void btnShow_Click(object sender, EventArgs e)
