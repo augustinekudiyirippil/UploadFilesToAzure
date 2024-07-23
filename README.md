@@ -1,7 +1,7 @@
 The project has sample code for
 1)Exporting data to CSV from gridview
 2)Copying files to another location in the same server
-2)Upload files to Azure
+2)Upload files to Azure with folder creation
 
 
 Note:
